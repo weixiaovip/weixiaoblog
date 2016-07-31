@@ -9,7 +9,7 @@
     </div>
     <div class="media-body">
         <h4 class="media-heading"><a href="/article/detail/<%=article._id%>"><%=article.title%></a></h4><!--属性前是=表示按字符串显示-->
-        <p><span style="color: red"><%=article.user.username%></span>  <%-article.content%></p><!--属性前是-表示按标签显示-->
+        <div style="height: 50px; overflow:hidden;white-space: nowrap;text-overflow: ellipsis;"><span style="color: red"><%=article.user.username%></span>  <%-article.content%></div><!--属性前是-表示按标签显示-->
     </div>
 </div>
 
