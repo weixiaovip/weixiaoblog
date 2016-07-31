@@ -32,7 +32,7 @@ router.post('/add', function(req, res) {
             res.redirect('back');
         }else{
             req.flash('success','发表文章成功');
-            res.redirect('/list');
+            res.redirect('/article/list');
         }
     })
 });
