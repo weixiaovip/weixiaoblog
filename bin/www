@@ -17,12 +17,14 @@ app.set('port', port);
 
 /**
  * Create HTTP server.
+ * 创建一个HTTP服务器
  */
 
 var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
+ * 监听端口号
  */
 
 server.listen(port);
@@ -31,6 +33,7 @@ server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
+ *
  */
 
 function normalizePort(val) {
@@ -64,11 +67,11 @@ function onError(error) {
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
-    case 'EACCES':
+    case 'EACCES': //ErrorAccess 没有权限
       console.error(bind + ' requires elevated privileges');
       process.exit(1);
       break;
-    case 'EADDRINUSE':
+    case 'EADDRINUSE': //Error address in use 端口被占用
       console.error(bind + ' is already in use');
       process.exit(1);
       break;
