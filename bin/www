@@ -4,8 +4,8 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('weixiaoblog:server');
+var app = require('../app'); //引入服务器请求处理函数
+var debug = require('debug')('weixiaoblog:server'); //服务器控制台打印信息模块
 var http = require('http');
 
 /**
