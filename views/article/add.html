@@ -1,15 +1,16 @@
 <%include ../include/header.html%>
 <form action="/article/add" method="post" class="form-horizontal">
+    <input type="hidden" name="_id" value="<%=article._id%>"><!--修改文章时上传的id-->
     <div class="form-group">
         <label for="title" class="col-sm-2 control-label">标题</label>
         <div class="col-sm-10">
-            <input type="text" name="title" class="form-control" id="title" placeholder="标题">
+            <input type="text" name="title" class="form-control" id="title" placeholder="标题" value="<%=article.title%>">
         </div>
     </div>
     <div class="form-group">
         <label for="content" class="col-sm-2 control-label">内容</label>
         <div class="col-sm-10">
-            <textarea class="form-control" name="content" id="content" cols="30" rows="10"></textarea>
+            <textarea class="form-control" name="content" id="content" cols="30" rows="10" placeholder="在这输入内容"><%=article.content%></textarea>
         </div>
     </div>
     <div class="form-group">

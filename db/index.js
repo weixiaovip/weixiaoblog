@@ -38,6 +38,11 @@ mongoose.model('article',new mongoose.Schema({
         type:Date,
         default:Date.now()
     },
+    comments:[{
+        user:{type:ObjectId,ref:'user'}, //评论人
+        content:{type:String}, //评论内容
+        createAt:{type:Date,default:Date.now()} //评论时间
+    }],
     user:{ //作者
         type:ObjectId,
         ref:'user'

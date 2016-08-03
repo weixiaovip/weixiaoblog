@@ -13,8 +13,88 @@
     </div>
 </div>
 
-<%})
+<%});
 %>
+<!--<nav style="position: absolute; bottom: 200px">-->
+<nav>
+    <ul class="pagination">
+        <%if(pageNum>1){%>
+        <li>
+            <a onclick="gotoPage(<%=pageNum-1%>)" href="#"  aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <%}%>
+
+        <%
+            for(var i=1; i<=totalPage; i++){%>
+            <li class="<%=i==pageNum?'active':''%>"><a onclick="gotoPage(<%=i%>)" href="#"><%=i%></a></li>
+
+        <%}
+        %>
+
+        <%if(pageNum < totalPage){%>
+        <li>
+            <a onclick="gotoPage(<%=pageNum+1%>)" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        <%}%>
+
+    </ul>
+</nav>
+
+<!--切换每页的条数-->
+<nav>
+    每页的条数
+    <ul class="pagination">
+        <li>
+            <select onchange="gotoPage(<%=pageNum%>)" class="form-control" id="pageSize">
+                <option <%= pageSize==5?'selected':''%> value="5">5</option>
+                <option <%= pageSize==10?'selected':''%> value="10">10</option>
+                <option <%= pageSize==20?'selected':''%> value="20">20</option>
+            </select>
+        </li>
+    </ul>
+</nav>
+
+<nav>
+    排序字段
+    <ul class="pagination">
+        <li>
+            <select onchange="gotoPage(<%=pageNum%>)" class="form-control" id="orderBy">
+                <option <%= orderBy=='user'?'selected':''%> value="user">作者</option>
+                <option <%= orderBy=='title'?'selected':''%> value="title">标题</option>
+                <option <%= orderBy=='content'?'selected':''%> value="content">内容</option>
+                <option <%= orderBy=='createAt'?'selected':''%> value="createAt">创建时间</option>
+            </select>
+        </li>
+    </ul>
+</nav>
+
+<nav>
+    升序/降序
+    <ul class="pagination">
+        <li>
+            <select onchange="gotoPage(<%=pageNum%>)" class="form-control" id="order">
+                <option <%= order==1?'selected':''%> value="1">升序</option>
+                <option <%= order==-1?'selected':''%> value="-1">降序</option>
+            </select>
+        </li>
+    </ul>
+</nav>
+
+<script>
+    function gotoPage(pageNum){
+        var pageSize = document.querySelector('#pageSize').value;
+        var orderBy = document.querySelector('#orderBy').value;
+        var order = document.querySelector('#order').value;
+        //        `/article/list?keyword=<%=keyword%>&pageNum=${pageNum}&pageSize=${pageSize}&orderBy=${orderBy}&order=${order}`;
+        var url = `/article/list?keyword=<%=keyword%>&pageNum=${pageNum}&pageSize=${pageSize}&orderBy=${orderBy}&order=${order}`;
+        console.log(url);
+        window.location.href = url;
+    }
+</script>
 
 <%include ../include/footer.html%>
 

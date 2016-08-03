@@ -50,7 +50,7 @@ app.use(function (req, res, next) {
     //只有重定向之前才给flash赋值，所以这里req.flash中可以取到
     res.locals.success = req.flash('success').toString(); //一个类型的flash数据可以有多条,是数组，因此转为字符串
     res.locals.error = req.flash('error').toString();
-    console.log('flash',req.flash('success'));
+    res.locals.keyword = '';
     next();
 });
 app.use(express.static(path.join(__dirname, 'public'))); //静态文件

@@ -29,6 +29,12 @@
                 %>
                 <li><a href="/article/list">全部文章</a></li>
             </ul>
+            <form action="/article/list" method="get" class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                    <input name="keyword" type="text" class="form-control" placeholder="关键字" value="<%=keyword%>">
+                </div>
+                <button type="submit" class="btn btn-default">搜索</button>
+            </form>
             <%if(user){%>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href=""><img src="<%=user.avatar%>" class="img-rounded"></a></li>
