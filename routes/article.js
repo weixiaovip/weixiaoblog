@@ -167,7 +167,8 @@ router.get('/edit/:_id', function(req, res) {
 router.post('/comment',function(req,res){
     var comment = req.body;// user createAt content(上传主体中自带content)
     comment.user = req.session.user._id;//从session得到用户的ID
-    comment.createAt = new Date();
+    comment.createAt = new Date().toLocaleDateString();
+    console.log(comment.createAt);
     Model('article').update({_id:comment.articleId},{
             $push:{comments:comment}},function(err,newDoc){
             if(err){
