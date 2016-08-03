@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var settings = require('../settings');
 var ObjectId = mongoose.Schema.Types.ObjectId;
 var db = mongoose.connect(settings.url);
+
 //创建注册model
 mongoose.model('user',new mongoose.Schema({
     username:{
@@ -46,7 +47,8 @@ mongoose.model('article',new mongoose.Schema({
     user:{ //作者
         type:ObjectId,
         ref:'user'
-    }
+    },
+    pv:{type:Number,default:0}//page view浏览量 每访问一次加1
 }));
 
 //把获取mode的方法挂在global上

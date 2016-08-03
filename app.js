@@ -10,6 +10,7 @@ var bodyParser = require('body-parser'); //请求主体 req.body
 var flash = require('connect-flash'); //用来设置session中只使用一次的值，使用一次后自动销毁
 var settings = require('./settings'); //读取配置文件中的信息
 require('./db'); //引入数据库处理文件（引入会自动执行）
+var fs = require('fs');
 
 var routes = require('./routes/index'); //'/'请求的处理文件
 var user = require('./routes/user'); // '/user'请求的处理文件
@@ -27,7 +28,9 @@ app.engine('html', require('ejs').__express);
 // uncomment after placing your favicon in /public
 // 把favicon.ico文件放在 public目录下，然后放开下面注释
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev')); //记录请求的中间件，并指定格式
+//app.use(logger('dev')); //记录请求的中间件，并指定格式
+var accessLog = fs.createWriteStream('access.log',{flags:'a'});
+app.use(logger('dev',{stream:accessLog}));
 app.use(bodyParser.json()); //请求主体是json时，解析后放到req.body上
 app.use(bodyParser.urlencoded({extended: false})); //请求是键值对的时候，解析false表示用用自己的方法解析
 app.use(cookieParser()); //req.cookies
@@ -63,9 +66,10 @@ app.use('/article', article);
 // catch 404 and forward to error handler
 // 捕获 404 错误并且转向错误处理中间件
 app.use(function (req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
+    //var err = new Error('Not Found');
+    //err.status = 404;
+    //next(err);
+    res.render('404',{title:'404页面'});
 });
 
 // error handlers //错误处理
@@ -73,8 +77,10 @@ app.use(function (req, res, next) {
 // development error handler //开发环境错误处理
 // will print stacktrace 将打印堆栈信息
 // env是读取的环境变量中的NODE_ENV(express模块中的applications.js文件中指定的)
+var errorLog = fs.createWriteStream('error.log', {flags: 'a'});
 if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) { //express模块做了处理，错误处理中间件（4个参数的）不会被默认执行
+        errorLog.write(err); //把错误打印到“error.log”文件中
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
@@ -87,6 +93,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user //不要向用户暴露堆栈信息
 app.use(function (err, req, res, next) {
     res.status(err.status || 500);
+    errorLog.write(err);//写入错误日志文件“error.log”
     res.render('error', {
         message: err.message,
         error: {}

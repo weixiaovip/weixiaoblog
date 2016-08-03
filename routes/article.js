@@ -5,6 +5,7 @@ var express = require('express');
 var router = express.Router();
 var auth = require('../middle'); //权限中间件
 var markdown = require('markdown').markdown;
+var async = require('async');
 /* GET home page. */
 //query传参 pageNum 当前的页数 pageSize 每页的条数
 router.get('/list', function(req, res) {
@@ -27,22 +28,13 @@ router.get('/list', function(req, res) {
     if(orderBy){
         orderObj[orderBy] = order;
     }
-    console.log(query);
+
     Model('article').find(query).count(function(err,count){
         //skip指跳过的条数  limit最大取得条数
         Model('article').find(query).sort(orderObj).skip(pageSize*(pageNum-1)).limit(pageSize).populate('user').exec(function(err,docs){
             if(err){
                 console.log('查询文章失败');
             }else{
-                console.log({title:'文章列表',
-                    articles:docs,  //文章信息
-                    keyword:keyword, //搜索关键词
-                    pageNum:pageNum, //第几页
-                    pageSize:pageSize, //每页条数
-                    totalPage:Math.ceil(count/pageSize), //总页数
-                    order:order,
-                    orderBy:orderBy
-                });
                 res.render('article/list',{title:'文章列表',
                     articles:docs,  //文章信息
                     keyword:keyword, //搜索关键词
@@ -104,11 +96,27 @@ router.post('/add', function(req, res) {
 
 //详情页
 router.get('/detail/:_id', function(req, res) {
-
-    Model('article').findById(req.params._id,function(err,doc){
-        doc.content = markdown.toHTML(doc.content);
-        res.render('article/detail',{title:'文章详情',article:doc})
-    })
+    async.parallel({ //并行执行函数,可以是数组或对象，（数组的话执行结果也是按定义的顺序的数组，对象的话结果是对应定义属性名（例如：pv/doc）的对象）
+        pv:function(cb){  //cb--由系统自动传入，用来通知函数执行完成，调用时传入执行的err和result
+            Model('article').update({_id:req.params._id},
+                {$inc:{pv:1}},
+                function(err,result){
+                    cb(err,result);
+                }
+            )
+        },
+        doc:function(cb){
+            Model('article').findById(req.params._id).populate('comments.user').exec(function(err,doc){
+                cb(err,doc);
+            });
+        }
+    },function(err,result){
+        res.render('article/detail',{title:'文章详情',article:result.doc});
+    });
+    //Model('article').findById(req.params._id).populate('comments.user').exec(function(err,doc){
+    //    doc.content = markdown.toHTML(doc.content);
+    //    res.render('article/detail',{title:'文章详情',article:doc})
+    //})
 });
 
 router.get('/delete/:_id', function(req, res) {
@@ -156,5 +164,34 @@ router.get('/edit/:_id', function(req, res) {
 
 });
 
+router.post('/comment',function(req,res){
+    var comment = req.body;// user createAt content(上传主体中自带content)
+    comment.user = req.session.user._id;//从session得到用户的ID
+    comment.createAt = new Date();
+    Model('article').update({_id:comment.articleId},{
+            $push:{comments:comment}},function(err,newDoc){
+            if(err){
+                req.flash('error','评论失败');
+                res.redirect('back');
+            }else{
+                req.flash('success','评论成功');
+                res.redirect('back');
+            }
+        }
+    );
+    /*Model('Article').findById(comment.articleId,function(err,doc){
+     doc.comments.push(comment);
+     doc.save(function(err,newDoc){
+     if(err){
+     req.flash('error','评论失败');
+     res.redirect('back');
+     }else{
+     req.flash('success','评论成功');
+     res.redirect('back');
+     }
+     });
+     })*/
+
+});
 
 module.exports = router;
