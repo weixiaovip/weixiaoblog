@@ -107,6 +107,7 @@ router.get('/detail/:_id', function(req, res) {
         },
         doc:function(cb){
             Model('article').findById(req.params._id).populate('comments.user').exec(function(err,doc){
+                doc.content = markdown.toHTML(doc.content);
                 cb(err,doc);
             });
         }
