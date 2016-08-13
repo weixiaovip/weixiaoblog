@@ -35,6 +35,7 @@ router.get('/list', function(req, res) {
             if(err){
                 console.log('查询文章失败');
             }else{
+
                 res.render('article/list',{title:'文章列表',
                     articles:docs,  //文章信息
                     keyword:keyword, //搜索关键词
@@ -65,7 +66,9 @@ router.post('/add', function(req, res) {
         Model('article').update( //修改数据库中对应的文章标题和内容
             {_id:_id},
             {$set:{title:article.title,content:article.content}},
+
             function(err,result){
+
                 if(err){
                     req.flash('error','修改文章失败');
                     res.redirect('back');
@@ -165,11 +168,11 @@ router.get('/edit/:_id', function(req, res) {
 
 });
 
-router.post('/comment',function(req,res){
+router.post('/comment', auth.checkLogin, function(req,res){
     var comment = req.body;// user createAt content(上传主体中自带content)
     comment.user = req.session.user._id;//从session得到用户的ID
     comment.createAt = new Date().toLocaleDateString();
-    console.log(comment.createAt);
+
     Model('article').update({_id:comment.articleId},{
             $push:{comments:comment}},function(err,newDoc){
             if(err){
@@ -194,6 +197,11 @@ router.post('/comment',function(req,res){
      });
      })*/
 
+});
+
+//demo页面
+router.get('/demo',auth.checkLogin, function(req, res) {
+    res.render('article/demo', { title: 'demo列表'});
 });
 
 module.exports = router;

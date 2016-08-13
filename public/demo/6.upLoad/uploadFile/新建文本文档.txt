@@ -1,0 +1,6 @@
+C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Node.js
+
+移动设备的三个viewport：
+layout viewport：980px 浏览器默认的宽度
+visual viewport：浏览器可视区域的大小（通过window.innerWidth获得）
+ideal viewport：移动设备的理想的宽度（在iphone中，css中的320px就代表iphone屏幕的宽度）

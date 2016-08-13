@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>天体旋转</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">切换</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">魏潇博客</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/article/list">全部文章</a></li>
+                <li><a href="/article/demo">返回</a></li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding: 0;
+        }
+
+        html,body{
+            width: 100%;
+            height: 100%;
+            background-color: #666;
+        }
+        .box{
+            margin: 0 auto;
+            position: relative;
+            width: 500px;
+            height: 500px;
+            list-style: none;
+        }
+
+        .box li{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid #cccccc;
+            border-radius: 50%;
+
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+            animation-name: myRotation;
+
+            /*animation: myRotation 5s infinite linear;*/
+        }
+
+        .box li span{
+            display: block;
+            position: absolute;
+
+
+            border: 1px solid #cccccc;
+            border-radius: 50%;
+        }
+
+        .box li:nth-child(1){
+            width: 100px;
+            height: 100px;
+            background-color: yellow;
+            box-shadow: 0 0 50px #ffd202;
+
+        }
+
+        .box li:nth-child(2){
+            width: 200px;
+            height: 200px;
+            animation-duration: 6s;
+        }
+
+        .box li:nth-child(2) span{
+            width: 20px;
+            height: 20px;
+            background-color: #2edaff;
+            top: 0;
+            left: 45px;
+        }
+
+        .box li:nth-child(3){
+            width: 300px;
+            height: 300px;
+            animation-duration: 8s;
+        }
+
+        .box li:nth-child(3) span{
+            width: 30px;
+            height: 30px;
+            background-color: green;
+            top: 0;
+            left: 134px;
+            animation: myRotation 2s infinite linear;
+
+        }
+
+        .box li:nth-child(3) span b{
+            display: block;
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #cca51b;
+            top: 0;
+            left: 35px;
+            border-radius: 50%;
+        }
+
+
+        .box li:nth-child(4){
+            width: 400px;
+            height: 400px;
+            animation-duration: 10s;
+        }
+
+        .box li:nth-child(4) span{
+            width: 40px;
+            height: 40px;
+            background-color: #ff444d;
+            top: 0;
+            left: 90px;
+        }
+
+        @keyframes myRotation {
+            0%{
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100%{
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+    </style>
+
+<ul class="box">
+    <li></li>
+    <li><span></span></li>
+    <li><span><b></b></span></li>
+    <li><span></span></li>
+</ul>
+
+</body>
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>放大镜</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">切换</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">魏潇博客</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/article/list">全部文章</a></li>
+                <li><a href="/article/demo">返回</a></li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+<style type="text/css">
+    .previewWrap {
+        position: relative;
+        width: 200px;
+        height: 300px;
+        cursor: pointer;
+    }
+
+    .previewWrap > img {
+        width: 100%;
+        height: 100%;
+
+    }
+
+    .previewWrap .mask {
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-color: #000;
+        opacity: 0.5;
+        filter: alpha(opacity=50)
+    }
+
+    .previewWrap .show {
+        position: absolute;
+        left: 220px;
+        top: 0;
+        width: 240px;
+        height: 360px;
+        overflow: hidden;
+    }
+
+    .previewWrap .show .relImg {
+
+    }
+</style>
+<script charset="utf-8" type="text/javascript" src="../utils/utils.js"></script>
+
+<div id="box" class="previewWrap">
+    <img src="img/big.jpg" alt="">
+</div>
+
+<script>
+
+    var oPreviewWrap = document.getElementById('box');
+    var previewW = utils.css(oPreviewWrap, 'width');
+    var previewH = utils.css(oPreviewWrap, 'height');
+
+    //    var scaleX =
+
+    //ie兼容性
+    function mouseEvent(e) {
+        e = e || window.event;
+        if (e.pageX == 'undefined') {
+            e.pageX = e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft);
+            e.pageY = e.clientY + (document.documentElement.scrollHeight || document.body.scrollHeight);
+            e.stopPropagation = function () {
+                e.cancelBubble = false;
+            }
+            e.preventDefault = function () {
+                e.returnValue = true;
+            }
+
+        }
+
+        return e;
+    }
+
+    //1、鼠标进入、创建遮罩层、放大区和img
+    oPreviewWrap.onmouseenter = function (e) {
+        e = mouseEvent(e);
+        var frg = document.createDocumentFragment();
+        var oMask = document.createElement('div');
+        oMask.className = 'mask';
+        frg.appendChild(oMask);
+
+        var oShow = document.createElement('div');
+        oShow.className = 'show';
+        var oImg = document.createElement('img');
+        oImg.className = 'relImg';
+        oImg.src = 'img/big.jpg';
+        oShow.appendChild(oImg);
+        frg.appendChild(oShow);
+        this.appendChild(frg);
+
+
+        var showW = utils.css(oShow, 'width'); //放大显示框-宽
+        var showY = utils.css(oShow, 'height');
+        var relW = utils.css(oImg, 'width');//图片真实-宽
+        var relH = utils.css(oImg, 'height');
+        var scaleX = previewW / relW; //小图和大图的 宽 比例
+        var scaleY = previewH / relH;
+        var maskW = showW * scaleX; //遮罩层的宽度
+        var maskH = showY * scaleY;
+
+        console.log(scaleX, scaleY);
+
+        oMask.style.width = maskW + 'px';
+        oMask.style.height = maskH + 'px';
+
+    };
+
+    //2、鼠标移动，遮罩层移动、放大区对应显示
+    oPreviewWrap.onmousemove = function (e) {
+        e = mouseEvent(e);
+
+        var oMask = utils.getElesByClass(this, 'mask')[0];
+        var oShow = utils.getElesByClass(this, 'show')[0];
+
+        if (oMask) {
+
+
+            var scaleX = utils.getCss(oMask, 'width') / utils.getCss(oShow, 'width'); //缩放比--宽
+            var scaleY = utils.getCss(oMask, 'height') / utils.getCss(oShow, 'height'); //缩放比--高
+
+            var sideRight = this.offsetWidth - oMask.offsetWidth; //遮罩层在小图中真正能移动的left值
+            var sideBottom = this.offsetHeight - oMask.offsetHeight;//遮罩层在小图中真正能移动的top值
+
+            var x = e.clientX - this.offsetLeft - oMask.offsetWidth / 2; //鼠标在遮罩层的中心，遮罩层的左上角到小图左边框的距离
+            var y = e.clientY - this.offsetTop - oMask.offsetHeight / 2; //鼠标在遮罩层的中心，遮罩层的左上角到小图上边框的距离
+
+            if (x < 0) {
+                oMask.style.left = 0;
+            } else if (x > sideRight) {
+                oMask.style.left = sideRight + 'px';
+                oShow.scrollLeft = sideRight / scaleX;
+            } else {
+                oMask.style.left = x + 'px';
+                oShow.scrollLeft = x / scaleX;
+            }
+
+            if (y < 0) {
+                oMask.style.top = 0;
+            } else if (y > sideBottom) {
+                oMask.style.top = sideBottom + 'px';
+                oShow.scrollTop = sideBottom / scaleY;
+            } else {
+                oMask.style.top = y + 'px';
+                oShow.scrollTop = y / scaleY;
+            }
+
+        }
+
+    };
+
+    //3、鼠标离开、遮罩层、放大区都移除
+    oPreviewWrap.onmouseleave = function (e) {
+        e = mouseEvent(e);
+        var oMask = utils.getElesByClass(this, 'mask')[0];
+        var oShow = utils.getElesByClass(this, 'show')[0];
+
+        if (oMask) {
+            this.removeChild(oMask);
+        }
+
+        if (oShow) {
+            this.removeChild(oShow);
+        }
+
+    }
+
+
+</script>
+</body>
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
+</html>

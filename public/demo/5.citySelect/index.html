@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>省市县三级联调</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">切换</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">魏潇博客</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/article/list">全部文章</a></li>
+                <li><a href="/article/demo">返回</a></li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+    <style type="text/css">
+
+        select{
+            width: 200px;
+            height: 35px;
+        }
+    </style>
+
+<form action="">
+    <select name="" id="province">
+        <option value="北京">北京</option>
+        <option value="山东">山东</option>
+    </select>
+
+    <select name="" id="city">
+        <option value="昌平">昌平</option>
+        <option value="海淀">海淀</option>
+        <option value="朝阳">朝阳</option>
+    </select>
+
+    <select name="" id="county">
+        <option value="回龙观">回龙观</option>
+        <option value="沙河">沙河</option>
+        <option value="霍营">霍营</option>
+    </select>
+</form>
+
+<script>
+
+    var data = {
+        "北京":{
+            "昌平":['回龙观','沙河','霍营'],
+            "海淀":['中关村','上地','西三旗'],
+            "朝阳":['大爷','大妈','大姨']
+        },
+        "山东":{
+            "济南":['历下区','市中区','章丘'],
+            "潍坊":['诸城','安丘','昌邑'],
+            "青岛":['崂山区','黄岛区','即墨']
+        }
+
+    };
+
+    var byId = document.getElementById;
+    var oProvince = document.getElementById('province');
+    var oCity = document.getElementById('city');
+    var oCounty = document.getElementById('county');
+
+    var curProvince = '北京';
+    var curCity = '昌平';
+    var curCounty = '回龙观';
+
+    oProvince.onchange = function(){
+        //获得省，展示市
+        curProvince = this.value;
+        var str = getAndBindData(curProvince);
+        oCity.innerHTML = str;
+
+        //获得市，展示县
+        curCity = oCity.value;
+        console.log(curCity);
+        str = getAndBindData(curProvince,curCity);
+        oCounty.innerHTML = str;
+    };
+
+    oCity.onchange = function(){
+        //获得市，展示县
+        curCity = this.value;
+        str = getAndBindData(curProvince,curCity);
+        oCounty.innerHTML = str;
+    };
+
+    oCounty.onchange = function(){
+        curCounty = this.value;
+        console.log(curCounty);
+    };
+
+    function getAndBindData(curProvince,curCity){
+        var str = '';
+        if(typeof curCity == 'undefined'){
+
+            var obj = data[curProvince]||{};
+            for(var key in obj){
+                str += '<option value="'+key+'">'+ key +'</option>'
+            }
+        }else{
+            var ary = data[curProvince][curCity]||[];
+            for(var i = 0; i<ary.length; i++){
+                str += '<option value="'+ary[i]+'">'+ ary[i] +'</option>'
+            }
+        }
+
+        return str;
+    }
+
+</script>
+</body>
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
+</html>

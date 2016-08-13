@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>放大镜</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">切换</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">魏潇博客</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/article/list">全部文章</a></li>
+                <li><a href="/article/demo">返回</a></li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+    <style type="text/css">
+        .box{
+            margin: 20px auto;
+
+            width: 400px;
+            height: 300px;
+            background: yellow;
+            text-align: center;
+            font-size: 30px;
+
+        }
+
+        .box .flag{
+            line-height: 300px;
+            font-size: 40px;
+            color: red;
+        }
+        .btn{
+            margin: 0 auto;
+        }
+    </style>
+
+<div id="box" class="box">把文件拖到此处 <span class="flag">上传！</span></div>
+<button id="btn" class="btn btn-primary">上传文件</button>
+<!--文件信息-->
+<table class="table table-bordered">
+    <tr>
+        <td>文件名称</td>
+        <td>文件类型</td>
+        <td>文件大小</td>
+    </tr>
+
+    <tr>
+        <td id="fileName"></td>
+        <td id="fileType"></td>
+        <td id="fileSize"></td>
+    </tr>
+</table>
+
+<!--进度条-->
+<div class="progress progress-striped active">
+    <div id="bar" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+    </div>
+</div>
+<!--上传状态信息-->
+<table class="table table-bordered">
+    <tr>
+        <td>上传速度</td>
+        <td>剩余时间</td>
+        <td>已经完成</td>
+    </tr>
+    <tr>
+        <td id="speed"></td>
+        <td id="time"></td>
+        <td id="stage"></td>
+    </tr>
+</table>
+
+<script>
+
+    var oBox = document.getElementById('box');
+    var oButton = document.getElementById('btn');
+    var oBar = document.getElementById('bar');
+    var oFileName = document.getElementById('fileName');
+    var oFileType = document.getElementById('fileType');
+    var oFileSize = document.getElementById('fileSize');
+    var oSpeed = document.getElementById('speed');
+    var oTime = document.getElementById('time');
+    var oStage = document.getElementById('stage');
+    var file = null;
+
+    //让ondrop触发必须阻止ondragover事件的默认行为
+    oBox.ondragover = function(e){
+        e.preventDefault();
+    };
+
+    //拖动文件松开时触发
+    oBox.ondrop = function(e){
+        e.preventDefault();
+
+        file = e.dataTransfer.files[0];
+        console.log(file);
+        oFileName.innerHTML = file.name;
+        oFileType.innerHTML = file.type;
+        oFileSize.innerHTML = computerFileSize(file.size);
+
+    };
+
+
+    //计算文件大小
+    function computerFileSize(size){
+        var res = null;
+        if(size>1024*1024*1024){
+            res = (size/1024/1024/1024).toFixed(2) +'GB';
+        }else if(size>1024*1024){
+            res = Math.round(size/1024/1024) +'MB';
+        }else if(size>1024){
+            res = Math.round(size/1024) +'KB';
+        }else{
+            res = Math.round(size) + 'Byte';
+        }
+
+        return res;
+    }
+
+    oButton.onclick = function(){
+        var xhr = new XMLHttpRequest();
+        xhr.open('post','/upload',true);
+        xhr.onload = function(){
+            alert(xhr.responseText);
+        };
+        //创建formdata格式对象
+        var fd = new FormData();
+        console.log(file);
+        fd.append('fileContent',file);
+
+
+
+
+        var last = 0;
+        //上传一段触发一次
+        xhr.upload.onprogress = function(e){
+            //e.loaded 已完成
+            //e.total 总量
+            var speed = (e.loaded - last) / 0.18; //大约0.18s触发一次
+            last = e.loaded;
+            //显示上传状态
+            oSpeed.innerHTML = computerFileSize(speed);
+            oTime.innerHTML = ((e.total - e.loaded)/speed).toFixed(2) + '秒';
+            oStage.innerHTML = computerFileSize(e.loaded);
+
+            //计算进度条
+            var precent = (e.loaded / e.total) * 100;
+            console.log(precent)
+
+            oBar['aria-valuenow'] = precent;
+            oBar.style.width = precent+'%';
+        };
+
+        //发送formdata格式数据
+        xhr.send(fd);
+
+    }
+
+</script>
+</body>
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
+</html>

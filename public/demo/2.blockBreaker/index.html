@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>打砖块</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">切换</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">魏潇博客</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/article/list">全部文章</a></li>
+                <li><a href="/article/demo">返回</a></li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+<style type="text/css">
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .box {
+        position: relative;
+        margin: 0 auto;
+        border: 1px solid #444444;
+        width: 400px;
+        height: 500px;
+    }
+
+    .ball {
+        border-radius: 50%;
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        left: 30px;
+        bottom: 15px;
+        background-color: #2edaff;
+        cursor: move;
+        opacity: 0.5;
+    }
+
+    .racket {
+        margin: 0;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100px;
+        height: 15px;
+        background-color: #ff6600;
+    }
+
+    .brick {
+        display: block;
+        width: 50px;
+        height: 20px;
+        position: absolute;
+        background-color: rgb(12, 56, 98);
+    }
+
+</style>
+<script src="../utils/event_class.js"></script>
+<script charset="utf-8" type="text/javascript" src="../utils/utils.js"></script>
+<script charset="utf-8" type="text/javascript" src="../utils/animate.js"></script>
+
+<div id="box" class="box">
+    <div id="ball" class="ball"></div>
+    <p id="racket" class="racket"></p>
+</div>
+
+<script>
+
+    //获得鼠标抬起时的x轴和y轴的速度
+    function getSpeed(e) {
+        if (!this.prevPosition) {
+            this.prevPosition = e.pageX;
+        } else {
+            this.flySpeed = e.pageX - this.prevPosition;
+            this.prevPosition = e.pageX;
+        }
+
+        if (!this.prevPositionY) {
+            this.prevPositionY = e.pageY;
+        } else {
+            this.dropSpeed = e.pageY - this.prevPositionY;
+            this.prevPositionY = e.pageY;
+        }
+
+    }
+
+    function clearTimer(e) {
+        clearInterval(this.flyTimer);
+        clearInterval(this.dropTimer);
+    }
+
+    function fly() {
+        var _this = this;
+        var flySpeed = this.flySpeed;
+        var left = null;
+        _this.flyTimer = setInterval(function () {
+
+            left = _this.ele.offsetLeft + flySpeed;
+            if (left > _this.maxL) {
+                left = _this.maxL;
+                flySpeed *= -1;
+            } else if (left < _this.minL) {
+                left = _this.minL;
+                flySpeed *= -1;
+            }
+
+            _this.curL = left;
+            _this.ele.style.left = left + 'px';
+        }, 10);
+    }
+
+    function drop() {
+        var _this = this;
+        _this.maxL = _this.ele.parentNode.offsetWidth - _this.ele.offsetWidth;
+        _this.maxT = _this.ele.parentNode.offsetHeight - _this.ele.offsetHeight;
+        _this.maxT_ball = this.maxT - oRacket.ele.offsetHeight;
+
+        var dropSpeed = this.dropSpeed, top = null, flag = 0;
+
+        _this.dropTimer = window.setInterval(function () {
+
+            top = _this.ele.offsetTop + dropSpeed;
+            if (top > _this.maxT) {
+                top = _this.maxT;
+                dropSpeed *= -1;
+                //如果小球碰到底部,小球消失，游戏结束
+                if (top >= _this.ele.parentNode.offsetHeight - _this.ele.offsetHeight) {
+                    clearInterval(_this.dropTimer);
+                    _this.ele.parentNode.removeChild(_this.ele);
+                    var res = confirm('                                 GAME OVER!\n                                 是  否  继  续  ？');
+                    if (res === true) {
+                        location.reload(false);
+                    } else {
+
+                    }
+                }
+
+            } else if (top < _this.minT) {
+                top = _this.minT;
+                dropSpeed *= -1;
+                _this.maxL = _this.ele.parentNode.offsetWidth - _this.ele.offsetWidth;
+                _this.maxT = _this.ele.parentNode.offsetHeight - _this.ele.offsetHeight;
+                console.log('drop-_this.maxT：' + _this.maxT);
+            } else {
+                flag = 0;
+            }
+
+            _this.curT = top;
+            _this.ele.style.top = top + 'px';
+            oDrag.minT = 0;
+            computedBallPos.call(_this); //计算小球是否能碰到拍子
+            computedCollidePos.call(_this); //计算小球是否装上砖块
+        }, 10);
+    }
+
+
+    //绑定到每个实例上
+    //计算小球是否能碰到拍子，碰到的话弹起
+    function computedBallPos() {
+        var racketCurL = oRacket.ele.offsetLeft; //底部拍子的左边的横向偏移
+        var racketCurR = oRacket.ele.offsetLeft + oRacket.ele.offsetWidth;// 拍子的右边的横向偏移
+        var ball_racket_minT = this.maxT_ball; //能碰到拍子时球的最小纵向偏移
+        var curBallBottom = this.curL + this.ele.offsetWidth / 2; //当前球的底部的横向偏移
+        if (curBallBottom >= racketCurL && curBallBottom <= racketCurR && (this.curT > ball_racket_minT)) {
+            console.log(this.maxT);
+            this.maxT = ball_racket_minT;
+            this.ele.style.top = ball_racket_minT + 'px';
+            console.log(this.maxT);
+        }
+
+    }
+
+
+    function downBall(e) {
+        oDrag.DOWN(e);
+    }
+
+    function moveBall(e) {
+        oDrag.minL = this.ele.offsetWidth / 2 - oDrag.ele.offsetWidth / 2;
+        oDrag.maxL = this.ele.parentNode.offsetWidth - this.ele.offsetWidth / 2 - oDrag.ele.offsetWidth / 2;
+        oDrag.minT = this.minT - oDrag.ele.offsetHeight;
+        oDrag.maxT = this.minT - oDrag.ele.offsetHeight;
+
+        oDrag.MOVE(e);
+    }
+
+
+    function moveEndBallFly(e) {
+        console.log(e.pageX);
+        oDrag.dropSpeed = -2;
+        oDrag.flySpeed = 2;
+        if (!oRacket.first) {
+            oDrag.minT = 0;
+            oDrag.minL = 0;
+            oDrag.UP(); //运行小球鼠标抬起函数
+            oRacket.first = 0;
+            oRacket.off(oBottom, 'selfdragstart', downBall);
+            oRacket.off(oBottom, 'selfdragging', moveBall)
+        }
+        oRacket.first++;
+
+    }
+
+    function createBrickGroup(nRow, nCell) {
+        nRow = nRow || 4;
+        nCell = nCell || 8;
+        var frg = document.createDocumentFragment();
+        for (var i = 0; i < nRow; i++) {
+            for (var j = 0; j < nCell; j++) {
+                var oDiv = createBrick();
+                oDiv.style.left = j * 50 + 'px';
+                oDiv.style.top = i * 20 + 'px';
+                frg.appendChild(oDiv);
+
+            }
+        }
+        oBox.appendChild(frg);
+    }
+
+    function createBrick() {
+        var oSpan = document.createElement('span');
+        oSpan.className = 'brick';
+        oSpan.style.backgroundColor = 'rgb(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ')';
+        return oSpan;
+    }
+
+    function isCover(curEle, otherEle) {
+        if ((curEle.offsetLeft + curEle.offsetWidth < otherEle.offsetLeft) || (curEle.offsetTop + curEle.offsetHeight < otherEle.offsetTop) || (curEle.offsetLeft > (otherEle.clientWidth + otherEle.offsetLeft)) || (curEle.offsetTop > (otherEle.clientHeight + otherEle.offsetTop))) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    function computedCollidePos() {
+        var aSpan = oBox.getElementsByTagName('span');
+
+        !oDrag.bricks ? oDrag.bricks = 0 : null;
+        if (oDrag.bricks === aSpan.length) { //砖块都打完了
+            var res = confirm('恭喜您过关了，点击确定重玩本关？');
+            if (res === true) {
+                location.reload(false);
+            } else {
+
+            }
+        }
+        for (var i = 0; i < aSpan.length; i++) {
+            var curSpan = aSpan[i];
+            if (isCover(this.ele, curSpan)) {
+                console.log(aSpan.length);
+                oDrag.minT = curSpan.offsetTop + curSpan.clientHeight;
+                curSpan.style.display = 'none';
+                oDrag.bricks++;
+
+            } else {
+//                curSpan.style.backgroundColor = 'red';
+            }
+
+        }
+    }
+
+
+    var oBox = document.getElementById('box');
+    var oBall = document.getElementById('ball');
+    var oBottom = document.getElementById('racket');
+
+    //生成顶部的砖块
+    createBrickGroup(4, 8);
+
+    //创建小球拖拽实例
+    var oDrag = new Drag(oBall);
+    oDrag.on(oBall, 'selfdragstart', clearTimer);
+    oDrag.on(oBall, 'selfdragging', getSpeed);
+    oDrag.on(oBall, 'selfdragend', fly);
+    oDrag.on(oBall, 'selfdragend', drop);
+    oDrag.on(oBall, 'selfdragend', function () {
+        this.ele.style.opacity = 1;
+    });
+
+    //创建拍子拖拽实例
+    var oRacket = new Drag(oBottom);
+    //限制拍子移动的范围
+    oRacket.minL = 0;
+    oRacket.maxL = oBottom.parentNode.offsetWidth - oBottom.offsetWidth;
+    oRacket.minT = oBottom.parentNode.offsetHeight - oBottom.offsetHeight;
+    oRacket.maxT = oBottom.parentNode.offsetHeight - oBottom.offsetHeight;
+    //鼠标在拍子上按下，相当于同时小球也被按下
+    oRacket.on(oBottom, 'selfdragstart', downBall);
+    //鼠标在拍子上移动，相当于同时小球也在移动
+    oRacket.on(oBottom, 'selfdragging', moveBall);
+    //移动完拍子，松开鼠标，让小球弹起，并取消移动
+    oRacket.on(oBottom, 'selfdragend', moveEndBallFly);
+</script>
+
+</body>
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
+</html>

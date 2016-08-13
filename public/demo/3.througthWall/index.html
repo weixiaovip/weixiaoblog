@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>穿墙效果</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">切换</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">魏潇博客</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/article/list">全部文章</a></li>
+                <li><a href="/article/demo">返回</a></li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding: 0;
+        }
+
+        .list{
+            margin: 10px auto;
+            list-style: none;
+            width: 660px;
+        }
+
+        .list:after{
+            clear: both;
+            display: block;
+            content: '';
+            zoom: 1;
+        }
+
+        .list li{
+            line-height: 200px;
+            font-size: 50px;
+            text-align: center;
+            position: relative;
+            float: left;
+            width: 200px;
+            height: 200px;
+            margin: 5px;
+            color: #eeeeee;
+            background-color: #9fbdff;
+            overflow: hidden;
+        }
+
+        .list li span{
+            position: absolute;
+            left: 0;
+            top: -200px;
+
+            display: block;
+            width: 100%;
+            height: 100%;
+            color: #000000;
+            background-color: #8b7d52;
+            z-index: 1;
+            opacity: 0.7;
+        }
+    </style>
+    <script charset="utf-8" type="text/javascript" src="../utils/utils.js"></script>
+    <script charset="utf-8" type="text/javascript" src="../utils/animate.js"></script>
+
+<ul id="list" class="list">
+    <li>1<span>模块一</span></li>
+    <li>2<span>模块二</span></li>
+    <li>3<span>模块三</span></li>
+    <li>4<span>模块四</span></li>
+    <li>5<span>模块五</span></li>
+    <li>6<span>模块六</span></li>
+    <li>7<span>模块七</span></li>
+    <li>8<span>模块八</span></li>
+    <li>9<span>模块九</span></li>
+</ul>
+
+<script>
+    var oUl = document.getElementById('list');
+    var aLi = oUl.getElementsByTagName('li');
+    var aSpan = oUl.getElementsByTagName('span');
+    for(var i=0;i<aLi.length; i++)
+    {
+        aLi[i].onmouseenter = maskEnter;
+        aLi[i].onmouseleave = maskLeave;
+    }
+
+    function maskEnter(e){
+        var mask = this.children[0];
+        var maskW = this.offsetWidth;
+        var maskH = this.offsetHeight;
+        var num = maskDir(this,e);
+        switch(num)
+        {
+            case 0:
+                mask.style.left = -maskW + 'px';
+                mask.style.top = 0;
+                break;
+            case 1:
+                mask.style.left = 0;
+                mask.style.top = maskH + 'px';
+                break;
+            case 2:
+                mask.style.left = maskW + 'px';
+                mask.style.top = 0;
+                break;
+            case 3:
+                mask.style.left = 0;
+                mask.style.top = -maskH + 'px';
+                break;
+            default:
+                break;
+        }
+
+        myAnimate(mask,{left:0,top:0},800,2);
+    }
+
+    function maskLeave(e){
+        var mask = this.children[0];
+        var maskW = this.offsetWidth;
+        var maskH = this.offsetHeight;
+        var num = maskDir(this,e);
+        switch(num)
+        {
+            case 0:
+                myAnimate(mask,{left:-maskW},800,2);
+                break;
+            case 1:
+                myAnimate(mask,{top:maskH},800,2);
+                break;
+            case 2:
+                myAnimate(mask,{left:maskW},800,2);
+                break;
+            case 3:
+                myAnimate(mask,{top:-maskH},800,2);
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    function a2d(a) {  //radian to deg
+        return a * 180 / Math.PI;
+    }
+
+    /**
+     * maskDir ：求出四边对应方向的数值，
+     * @param obj ：遮罩层所在的容器对象
+     * @param ev ：鼠标事件对象
+     * @returns {number} ：left->0，bottom->1,right->2,top->3
+     */
+    function maskDir(obj, ev) {
+        var x =  ev.clientX - (obj.offsetLeft + obj.offsetWidth / 2); //以每个li中心为原点，计算鼠标进入的x轴坐标值
+        var y =  -(ev.clientY - (obj.offsetTop + obj.offsetHeight / 2)); //以每个li中心为原点，计算鼠标进入的y轴坐标值
+        console.log(x,y);
+        return Math.round((a2d(Math.atan2(y, x)) + 180) / 90) % 4;
+        // a2d(Math.atan2(y, x) =>计算坐标（x,y）出以x轴正向为起边的角度值（第一象限时角度为正，第四象限角度为负）
+        //(a2d(Math.atan2(y, x)) + 180 =>以x轴负向为起边，所有角度为正值，逆时针逐渐增大
+        //Math.round((a2d(Math.atan2(y, x)) + 180) / 90)，求出四边对应方向的数值，left->0，bottom->1,right->2,top->3
+    }
+</script>
+</body>
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
+</html>

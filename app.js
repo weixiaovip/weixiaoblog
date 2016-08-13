@@ -92,6 +92,7 @@ if (app.get('env') === 'development') {
 // production error handler //生产环境错误处理
 // no stacktraces leaked to user //不要向用户暴露堆栈信息
 app.use(function (err, req, res, next) {
+    console.log(req.url);
     res.status(err.status || 500);
     errorLog.write(err);//写入错误日志文件“error.log”
     res.render('error', {

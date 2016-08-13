@@ -1,0 +1,65 @@
+File Transfer Protocol
+World Wide Web
+technology
+Hyper Text Mark-up Language
+
+https://www.baidu.com/s?word=HTML%E4%BC%AA%E7%B1%BB&tn=sitehao123&ie=utf-8&sc=UWd1pgw-pA7EnHc1FMfqnHfvnjRknHb3rjnLnzuW5y99U1Dznzu9m1YknWR4njm4rjD3&ssl_sample=normal
+
+//花生壳
+
+RUNSTATUS= ONLINE
+SN= RAPIb8087cac20a098c4
+LoginAddress= http://b.oray.com/
+
+
+1542qs4357.iask.in
+
+//重启花生壳
+sudo oraynewph start
+
+//刷新DNS
+ipconfig/flushdns
+
+//小米路由器--外网ip
+10.102.255.248
+
+//启动mongo
+sudo /etc/init.d/mongod start
+//删除非法关机导致的加锁
+sudo rm /var/lib/mongodb/mongod.lock
+//关闭mongo
+sudo /etc/init.d/mongod stop
+
+//启动blog
+
+sudo node node/blog/bin/www
+
+
+sudo ./software/ngrok http 3000
+
+
+natapp -authtoken=ba54ebfc548aa411
+http://21b9da8a.ngrok.natapp.cn:8080/
+http://24a6f7ce.ngrok.natapp.cn -
+http://c94d261b.ngrok.io 
+
+
+阿里云
+123.56.249.241
+服务码：755083
+
+//git bash 连接 服务器
+ssh root@123.56.249.241
+密码：013263wx~
+//重启mongodb
+service mongodb restart
+
+
+PC端：企业网站的开发
+移动端：H5活动页面的开发;
+职责：从psd设计图到html页面结构的搭建和修饰、页面动态效果的实现、数据的交互
+
+主要工作内容：
+PC端：企业网站的开发
+移动端：H5活动页面的开发;
+职责：从psd设计图到html页面结构的搭建和修饰、页面动态效果的实现、数据的交互

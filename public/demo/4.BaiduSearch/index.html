@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>百度搜索jsonp</title>
+    <link rel="stylesheet" href="css/reset.css" charset="UTF-8" type="text/css">
+    <link rel="stylesheet" href="css/index.css" charset="UTF-8" type="text/css">
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">切换</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">魏潇博客</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/article/list">全部文章</a></li>
+                <li><a href="/article/demo">返回</a></li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+
+<div class="search" id="search">
+    <input type="text" class="input" id="input">
+    <div class="searchBar" id="searchBar">搜索</div>
+    <ul class="list" id="list">
+        <li>搜索关键词1</li>
+        <li>搜索关键词2</li>
+        <li>搜索关键词3</li>
+        <li>搜索关键词4</li>
+    </ul>
+</div>
+
+<script charset="utf-8" type="text/javascript" src="js/jsonp.js"></script>
+<script charset="utf-8" type="text/javascript" src="js/index.js"></script>
+</body>
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>3D反转</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">切换</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">魏潇博客</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/article/list">全部文章</a></li>
+                <li><a href="/article/demo">返回</a></li>
+            </ul>
+
+        </div>
+    </div>
+</nav>
+    <style type="text/css">
+        *{
+            margin: 0;
+            padding: 0;
+        }
+
+        .stage {
+            width: 367px;
+            height: 297px;
+            position: relative;
+            perspective: 2000px; /*视距*/
+        }
+        .container{
+            position: absolute;
+            left: 50%;
+            top:50%;
+            margin:-100px 0 0 -100px;
+            width: 200px;
+            height: 200px;
+            transform-style: preserve-3d; /*3d空间里展示*/
+            transform: rotateX(0deg);
+
+            transition: all 0.5s ease-in;
+        }
+        .slide{
+            position: absolute;
+            width: 296px;
+            height: 196px;
+            border:2px solid #8ec63f;
+            background: rgba(142,198,63,0.3);
+            line-height: 196px;
+            font-size: 30px;
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+
+        }
+
+        .bottom{
+            background: url("images/1.jpg");
+            background-size: 100% 100%;
+            transform:  rotateX(-90deg) translateZ(100px);
+        }
+
+        .front{
+            background: url("images/2.jpg");
+            background-size: 100% 100%;
+            transform:   translateZ(100px);
+        }
+
+
+        .container:hover{
+            transform: rotateX(90deg);
+        }
+
+    </style>
+
+<div class="stage">
+    <div class="container">
+        <div class="slide front"></div>
+        <div class="slide bottom"></div>
+    </div>
+</div>
+</body>
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
+</html>
