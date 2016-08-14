@@ -17,8 +17,8 @@ module.exports = {
         if(req.session.user){
             next();
         }else{
-            req.flash('error','未登录');
-            res.redirect('/')
+            req.flash('error','请先登录。若没有帐号，点击上方的“注册”按钮进行注册！');
+            res.redirect('/user/login');
         }
     }
 };
